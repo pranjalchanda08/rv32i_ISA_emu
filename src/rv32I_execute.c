@@ -35,7 +35,7 @@ uint32_t execute_jal(_rv_if_u_j_t u_word)
 uint32_t execute_jalr(_rv_if_i1_t i_word)
 {
     g_rv32i_ctx.gpr_u.xn[i_word._wordcode_u._rv_if_i1.rd] = g_rv32i_ctx.pc + RV32_PC_JUMP;
-    return g_rv32i_ctx.pc + __I_MASK(i_word._wordcode_u.wordcode) + i_word._wordcode_u._rv_if_i1.rs1;
+    return g_rv32i_ctx.pc + get_i(i_word._wordcode_u.wordcode) + i_word._wordcode_u._rv_if_i1.rs1;
 }
 
 uint32_t execute_alur(_rv_if_r_t r_word)
@@ -176,7 +176,7 @@ uint32_t execute_load(_rv_if_i1_t i_word)
         g_rv32i_ctx.gpr_u.xn[i_word._wordcode_u._rv_if_i1.rd] = 0xFFFFFF00;
         g_rv32i_ctx.gpr_u.xn[i_word._wordcode_u._rv_if_i1.rd] |=
             ram_load(&g_dram_mem,
-                      g_rv32i_ctx.gpr_u.xn[i_word._wordcode_u._rv_if_i1.rs1] + __I_MASK(i_word._wordcode_u.wordcode),
+                      g_rv32i_ctx.gpr_u.xn[i_word._wordcode_u._rv_if_i1.rs1] + get_i(i_word._wordcode_u.wordcode),
                       8);
         break;
     case 0x04:
@@ -184,7 +184,7 @@ uint32_t execute_load(_rv_if_i1_t i_word)
         g_rv32i_ctx.gpr_u.xn[i_word._wordcode_u._rv_if_i1.rd] = 0x00000000;
         g_rv32i_ctx.gpr_u.xn[i_word._wordcode_u._rv_if_i1.rd] |=
             ram_load(&g_dram_mem,
-                      g_rv32i_ctx.gpr_u.xn[i_word._wordcode_u._rv_if_i1.rs1] + __I_MASK(i_word._wordcode_u.wordcode),
+                      g_rv32i_ctx.gpr_u.xn[i_word._wordcode_u._rv_if_i1.rs1] + get_i(i_word._wordcode_u.wordcode),
                       8);
         break;
     case 0x01:
@@ -192,7 +192,7 @@ uint32_t execute_load(_rv_if_i1_t i_word)
         g_rv32i_ctx.gpr_u.xn[i_word._wordcode_u._rv_if_i1.rd] = 0xFFFFFF00;
         g_rv32i_ctx.gpr_u.xn[i_word._wordcode_u._rv_if_i1.rd] |=
             ram_load(&g_dram_mem,
-                      g_rv32i_ctx.gpr_u.xn[i_word._wordcode_u._rv_if_i1.rs1] + __I_MASK(i_word._wordcode_u.wordcode),
+                      g_rv32i_ctx.gpr_u.xn[i_word._wordcode_u._rv_if_i1.rs1] + get_i(i_word._wordcode_u.wordcode),
                       16);
         break;
     case 0x05:
@@ -200,7 +200,7 @@ uint32_t execute_load(_rv_if_i1_t i_word)
         g_rv32i_ctx.gpr_u.xn[i_word._wordcode_u._rv_if_i1.rd] = 0x00000000;
         g_rv32i_ctx.gpr_u.xn[i_word._wordcode_u._rv_if_i1.rd] |=
             ram_load(&g_dram_mem,
-                      g_rv32i_ctx.gpr_u.xn[i_word._wordcode_u._rv_if_i1.rs1] + __I_MASK(i_word._wordcode_u.wordcode),
+                      g_rv32i_ctx.gpr_u.xn[i_word._wordcode_u._rv_if_i1.rs1] + get_i(i_word._wordcode_u.wordcode),
                       16);
         break;
     case 0x02:
@@ -208,7 +208,7 @@ uint32_t execute_load(_rv_if_i1_t i_word)
         g_rv32i_ctx.gpr_u.xn[i_word._wordcode_u._rv_if_i1.rd] = 0xFFFFFF00;
         g_rv32i_ctx.gpr_u.xn[i_word._wordcode_u._rv_if_i1.rd] |=
             ram_load(&g_dram_mem,
-                      g_rv32i_ctx.gpr_u.xn[i_word._wordcode_u._rv_if_i1.rs1] + __I_MASK(i_word._wordcode_u.wordcode),
+                      g_rv32i_ctx.gpr_u.xn[i_word._wordcode_u._rv_if_i1.rs1] + get_i(i_word._wordcode_u.wordcode),
                       32);
         break;
     default:
