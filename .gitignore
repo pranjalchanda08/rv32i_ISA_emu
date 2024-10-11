@@ -2,6 +2,7 @@
 *.d
 build
 out
+.vscode
 
 # Object files
 *.o

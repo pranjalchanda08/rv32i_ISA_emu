@@ -28,6 +28,10 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 # These files will have .d instead of .o as the output.
 CPPFLAGS := $(INC_FLAGS) -MMD -MP
 
+ASM ?=
+ARGS ?= 
+LD_FILE ?= rv32.ld
+
 # The final build step.
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
@@ -48,19 +52,18 @@ clean:
 	rm -r $(BUILD_DIR)
 	rm -r $(OUT_DIR)
 
-ARGS ?= 
 run:
-	mkdir -p $(OUT_DIR)
-	./$(BUILD_DIR)/$(TARGET_EXEC) $(ARGS)
+	mkdir -p $(OUT_DIR)/$(ASM)
+	./$(BUILD_DIR)/$(TARGET_EXEC) $(ARGS) $(ASM)
 
 debug:
-	gdb --args ./$(BUILD_DIR)/$(TARGET_EXEC) $(ARGS)
+	mkdir -p $(OUT_DIR)/$(ASM)
+	gdb --args ./$(BUILD_DIR)/$(TARGET_EXEC) $(ARGS) $(ASM)
 
-ASM ?=
 ASMDIR ?= rv32_asm
 asm:
 	mkdir -p ./$(BUILD_DIR)
-	riscv64-unknown-elf-gcc -march=rv32i -mabi=ilp32 -static -nostdlib -T$(ASMDIR)/rv32.ld $(ASMDIR)/$(ASM).s -o $(BUILD_DIR)/add.elf
+	riscv64-unknown-elf-gcc -march=rv32i -mabi=ilp32 -static -nostdlib -T$(ASMDIR)/$(LD_FILE) $(ASMDIR)/$(ASM).s -o $(BUILD_DIR)/add.elf
 	riscv64-unknown-elf-objcopy -O binary $(BUILD_DIR)/$(ASM).elf $(BUILD_DIR)/$(ASM).bin
 
 -include $(DEPS)

@@ -5,10 +5,10 @@ void rv32_decode(uint32_t word)
     union type
     {
         uint32_t wordcode;
-        _rv_if_u_j_t u_j_word;
-        _rv_if_r_t r_word;
-        _rv_if_i1_t i1_word;
-        _rv_if_i2_s_b_t i2_s_b_word;
+        rv_if_u_j_t u_j_word;
+        rv_if_r_t r_word;
+        rv_if_i1_t i1_word;
+        rv_if_i2_s_b_t i2_s_b_word;
     } type_u;
 
     type_u.wordcode = word;
@@ -74,7 +74,7 @@ void rv32_fetch(ram_t *iram)
         printf("[0x%08x]: [0x%08x]: ", g_rv32i_ctx.pc, wordcode);
         if (!wordcode)
         {
-            printf("PC reached EOF. Exiting Fetching\n");
+            printf("PC reached EOF\n");
             break;
         }
         rv32_decode(wordcode);

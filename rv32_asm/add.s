@@ -2,10 +2,12 @@
 
 .section .text
 .globl _start
+.globl stack_top
 
 _start:
-    addi a0, zero, 0x13
-    addi a1, zero, 0x23
+    la sp, stack_top
+    li a0, 0x13
+    li a1, 0x23
     add a2, a0, a1
     la a4, msg
 

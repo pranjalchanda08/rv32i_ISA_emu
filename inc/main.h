@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stdio.h"
+#include "string.h"
 #include "inttypes.h"
 #include "ram.h"
 #include "rv32I_struct.h"

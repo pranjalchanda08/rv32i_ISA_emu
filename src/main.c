@@ -20,69 +20,80 @@ static void rv32_ram_detach()
     deinit_ram();
 }
 
-static uint32_t rv32_ram_store_ibin(char const * file_path)
+static uint32_t rv32_ram_store_ibin(char const *file_path)
 {
-    printf("IBin Path: %s\n", file_path);
     FILE *ibin = fopen(file_path, "rb");
-    if(!ibin)
+    if (!ibin)
+    {
         printf("Error reading bin file \n");
+        exit(1);
+    }
     else
-        printf("ibin found. Reading binary....\n");
+        printf("ibin found. Reading %s\n", file_path);
     uint32_t iword = 0;
     uint32_t imem_addr = IRAM_BASE;
 
     while (fread(&iword, sizeof(uint32_t), 1, ibin))
     {
-        // printf("0x%x: 0x%x\n", imem_addr, iword);
         ram_store(&g_iram_mem, imem_addr, 32, iword);
-        imem_addr+=sizeof(uint32_t);
+        imem_addr += sizeof(uint32_t);
     }
     printf("Reading binary Success. Max Addr: 0x%0x\n", imem_addr);
     fclose(ibin);
     return imem_addr;
 }
 
-static void rv32_ram_dump()
+static void rv32_ram_dump(char const *asm_name)
 {
-    printf("Saving RAM Dump..\n");
-    FILE *mem = fopen("out/ram_dump.bin", "wb");
+    char *out_file_path = malloc(strlen(asm_name) + 20);
+    sprintf(out_file_path, "out/%s/ram_dump.bin", asm_name);
+    printf("Saving RAM Dump: %s\n", out_file_path);
+    FILE *mem = fopen(out_file_path, "wb");
     uint32_t buff;
-    uint32_t imem_addr = IRAM_BASE;
+    uint32_t imem_addr = 0;
     while (imem_addr < RAM_SIZE)
     {
-        // printf("%d, %d\n", imem_addr, imem_max);
         buff = ram_load(&g_iram_mem, imem_addr, 8);
         imem_addr++;
         fwrite(&buff, sizeof(uint8_t), 1, mem);
     }
-    fclose(mem);    
+    free(out_file_path);
+    fclose(mem);
 }
-static void rv32_cpu_reg_dump()
+
+static void rv32_cpu_reg_dump(char const *asm_name)
 {
-    printf("Saving REG Dump..\n");
-    FILE *mem = fopen("out/reg_dump.bin", "wb");
+    char *out_file_path = malloc(strlen(asm_name) + 20);
+    sprintf(out_file_path, "out/%s/reg_dump.bin", asm_name);
+    printf("Saving REG Dump: %s\n", out_file_path);
+    FILE *mem = fopen(out_file_path, "wb");
     fwrite(&g_rv32i_ctx, sizeof(rv32i_ctx_t), 1, mem);
     fclose(mem);
 }
 
 int main(int argc, char const *argv[])
 {
-    if (argc == 1)
+    if (argc < 2)
     {
         printf("Instuction Binary not provided!!\n");
-        exit(1);
+        return 1;
     }
-    
+    if (argc < 3)
+    {
+        printf("ASM name not provided\n");
+        return 1;
+    }
     printf("rv32I emu Startup \n");
     rv32_ram_attach();
     /* Read instruction and data binary and save it to the ram instance */
     rv32_ram_store_ibin(argv[1]);
-    // uint32_t imem_max = rv32_ram_store_ibin("rv32_asm/add.bin");
-    
-    rv32_fetch(&g_iram_mem);
 
-    rv32_ram_dump();
-    rv32_cpu_reg_dump();
+    printf("\n-------------- Execution Start --------------\n");
+    rv32_fetch(&g_iram_mem);
+    printf("-------------- Execution End ----------------\n\n");
+
+    rv32_ram_dump(argv[2]);
+    rv32_cpu_reg_dump(argv[2]);
     rv32_ram_detach();
     return 0;
 }

@@ -23,7 +23,7 @@ $ make asm ASM={asm_name}
 
 ## Run
 ```sh
-$ make run ARGS={path_to_asm.bin}
+$ make run ARGS={path_to_asm.bin} ASM={asm_name}
 ```
 
 ## Example run
@@ -57,7 +57,6 @@ MEMORY
 	/* VM Addresses */
 	IRAM (rx)	: ORIGIN = 0x1000, LENGTH = 1k
 	DRAM (rwx)	: ORIGIN = 0x2000, LENGTH = 4k
-	STACK(rwx)	: ORIGIN = 0x4000, LENGTH = 4k
 }
 
 ENTRY(_start)
@@ -68,14 +67,12 @@ SECTIONS
     } > IRAM
     .data : {
         *(.data)
-    } > DRAM AT> DRAM
-    .stack : 
-    {
-        *(.stack)
-    } > STACK
-    stack_top = .;
+    } > DRAM
+    . = 0x2000 + 4k;
+    PROVIDE(stack_top = .);
     _end = .;
 }
+
 ```
 #### Build add.bin and rv32I_emu
 ```sh
@@ -85,46 +82,52 @@ $ make asm ASM=add
 ```
 #### Run rv32I_emu
 ```sh
-$ make run ARGS=build/add.bin
+$ make run ARGS=build/add.bin ASM=add
 ```
 
 #### Output
 ```sh
-./build/rv32I_emu build/add.bin
-rv32I emu Startup
+mkdir -p out/add
+./build/rv32I_emu build/add.bin add
+rv32I emu Startup 
 RAM Init done
 IRAM Space Allocation done: s:0x400, b:0x1000
 DRAM Space Allocation done: s:0x1000, b:0x2000
-IBin Path: build/add.bin
-ibin found. Reading binary....
+ibin found. Reading build/add.bin
 Reading binary Success. Max Addr: 0x2010
+
+-------------- Execution Start --------------
 [0x00001000]: [0x01300513]: RV32_OPCODE_ALUI
 [0x00001004]: [0x02300593]: RV32_OPCODE_ALUI
 [0x00001008]: [0x00b50633]: RV32_OPCODE_ALUR
 [0x0000100c]: [0x00001717]: RV32_OPCODE_AUIPC
 [0x00001010]: [0xff470713]: RV32_OPCODE_ALUI
-[0x00001014]: [0x00000000]: PC reached EOF. Exiting Fetching
-Saving RAM Dump..
-Saving REG Dump..
+[0x00001014]: [0x00000000]: PC reached EOF
+-------------- Execution End ----------------
+
+Saving RAM Dump: out/add/ram_dump.bin
+Saving REG Dump: out/add/reg_dump.bin
 RAM De-Init done
 ```
 
 #### RAM Dump
 ```sh
-$ hexdump out/ram_dump.bin
-0000000 0513 0130 0593 0230 0633 00b5 1717 0000
-0000010 0713 ff47 0000 0000 0000 0000 0000 0000
-0000020 0000 0000 0000 0000 0000 0000 0000 0000
+$ hexdump out/add/ram_dump.bin
+0000000 0000 0000 0000 0000 0000 0000 0000 0000
 *
-0001000 7250 6e61 616a 0a6c 4300 6168 646e 0a61     Pranjal  Chanda 
-0001010 0000 0000 0000 0000 0000 0000 0000 0000
+0001000 0513 0130 0593 0230 0633 00b5 1717 0000
+0001010 0713 ff47 0000 0000 0000 0000 0000 0000
+0001020 0000 0000 0000 0000 0000 0000 0000 0000
 *
-0003000
+0002000 7250 6e61 616a 0a6c 4300 6168 646e 0a61     Pranjal Chanda
+0002010 0000 0000 0000 0000 0000 0000 0000 0000
+*
+0004000
 ```
 
 #### CPU REG Dump
 ```sh
-hexdump out/reg_dump.bin 
+hexdump out/add/reg_dump.bin
 0000000 0000 0000 0000 0000 0000 0000 0000 0000
 *
 0000020 0000 0000 0000 0000 0013 0000 0023 0000

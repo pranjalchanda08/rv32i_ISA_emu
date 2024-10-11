@@ -41,7 +41,7 @@ static void dram_store_32(ram_t *ram, uint32_t addr, uint32_t value)
 
 void init_ram(size_t ram_size)
 {
-    ram_mem = (uint8_t*)malloc(ram_size);
+    ram_mem = (uint8_t *)malloc(ram_size);
 }
 
 void deinit_ram()
@@ -98,14 +98,3 @@ void ram_store(ram_t *ram, uint32_t addr, uint32_t size, uint32_t value)
     default:;
     }
 }
-
-// void ram_store_ibin(FILE *mem, size_t ram_base, size_t ram_size)
-// {
-//     uint32_t iword;
-//     while (fread(&iword, sizeof(uint32_t), 1, mem))
-//     {
-//         // printf("0x%x: 0x%x\n", imem_addr, iword);
-//         ram_store(&g_iram_mem, imem_addr, 32, iword);
-//         imem_addr+=sizeof(uint32_t);
-//     }
-// }
