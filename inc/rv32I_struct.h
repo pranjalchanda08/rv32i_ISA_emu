@@ -11,16 +11,16 @@
 
 typedef enum opcode
 {
-    RV32_OPCODE_LOAD        = 0x03,     // 5 different Load _wcructions
-    RV32_OPCODE_ALUI        = 0x13,     // 9 different ALU immidiate _wcructions
+    RV32_OPCODE_LOAD        = 0x03,     // 5 different Load insructions
+    RV32_OPCODE_ALUI        = 0x13,     // 9 different ALU immidiate insructions
     RV32_OPCODE_AUIPC       = 0x17,
-    RV32_OPCODE_STORE       = 0x23,     // 3 different Store _wcructions
-    RV32_OPCODE_ALUR        = 0x33,     // 10 different ALU reg _wcructions
+    RV32_OPCODE_STORE       = 0x23,     // 3 different Store instructions
+    RV32_OPCODE_ALUR        = 0x33,     // 10 different ALU reg instructions
     RV32_OPCODE_LUI         = 0x37,
-    RV32_OPCODE_BRANCH      = 0x63,     // 6 different branch _wcructions
+    RV32_OPCODE_BRANCH      = 0x63,     // 6 different branch instructions
     RV32_OPCODE_JALR        = 0x67,
     RV32_OPCODE_JAL         = 0x6F,
-    RV32_OPCODE_CSR         = 0x73,     // 8 different CSR _wcructions
+    RV32_OPCODE_CSR         = 0x73,     // 8 different CSR instructions
 }_rv32_base_opcode_t;
 
 typedef struct _rv32i_ctx
@@ -106,3 +106,13 @@ typedef struct _rv_if_i2_s_b
         }_rv_if_i2_s_b;
     }_wordcode_u;
 }rv_if_i2_s_b_t;
+
+typedef uint32_t (*exec)(uint32_t wcode);
+typedef struct rv32_opcode_reg
+{
+    _rv32_base_opcode_t code;
+    const char* name;
+    exec exec_cb;
+}rv32_opcode_reg_t;
+
+#define REG_OPCODE(_opcode, _fn)  {_opcode, #_opcode, (exec)_fn}

@@ -17,7 +17,7 @@ SECTIONS
     .data : {
         *(.data)
     } > DRAM
-    . = 0x2000 + 4k;
-    PROVIDE(stack_top = .);
+
+    PROVIDE(stack_top = 0x2000 + 4k);
     _end = .;
 }

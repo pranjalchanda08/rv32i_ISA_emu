@@ -6,10 +6,10 @@
 
 _start:
     la sp, stack_top
-    li a0, 0x13
-    li a1, 0x23
-    add a2, a0, a1
-    la a4, msg
+    li t0, 0x13 ; addi t0, zero, 0x13
+    li t1, 0x23 ; addi t1, zero, 0x23
+    add t2, t0, t1
+    la t4, msg ; auipc + addi
 
 .section .data
 msg:

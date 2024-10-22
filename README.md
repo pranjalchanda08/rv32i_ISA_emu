@@ -87,9 +87,10 @@ $ make run ARGS=build/add.bin ASM=add
 
 #### Output
 ```sh
+make run ARGS=build/add.bin ASM=add
 mkdir -p out/add
 ./build/rv32I_emu build/add.bin add
-rv32I emu Startup 
+rv32I emu Startup
 RAM Init done
 IRAM Space Allocation done: s:0x400, b:0x1000
 DRAM Space Allocation done: s:0x1000, b:0x2000
@@ -97,12 +98,15 @@ ibin found. Reading build/add.bin
 Reading binary Success. Max Addr: 0x2010
 
 -------------- Execution Start --------------
-[0x00001000]: [0x01300513]: RV32_OPCODE_ALUI
-[0x00001004]: [0x02300593]: RV32_OPCODE_ALUI
-[0x00001008]: [0x00b50633]: RV32_OPCODE_ALUR
-[0x0000100c]: [0x00001717]: RV32_OPCODE_AUIPC
-[0x00001010]: [0xff470713]: RV32_OPCODE_ALUI
-[0x00001014]: [0x00000000]: PC reached EOF
+
+[0x00001000]: [0x00002117]: RV32_OPCODE_AUIPC   : auipc sp, 0x2000
+[0x00001004]: [0x00010113]: RV32_OPCODE_ALUI    : addi  sp, sp, 0x0
+[0x00001008]: [0x01300293]: RV32_OPCODE_ALUI    : addi  t0, zero, 0x13
+[0x0000100C]: [0x02300313]: RV32_OPCODE_ALUI    : addi  t1, zero, 0x23
+[0x00001010]: [0x006283B3]: RV32_OPCODE_ALUR    : add   t2, t0, t1
+[0x00001014]: [0x00001E97]: RV32_OPCODE_AUIPC   : auipc t4, 0x1000
+[0x00001018]: [0xFECE8E93]: RV32_OPCODE_ALUI    : addi  t4, t4, 0xfec
+[0x0000101C]: [0x00000000]: PC reached EOF
 -------------- Execution End ----------------
 
 Saving RAM Dump: out/add/ram_dump.bin
