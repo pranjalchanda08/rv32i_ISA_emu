@@ -1,6 +1,6 @@
 #include "main.h"
 
-rv32i_ctx_t g_rv32i_ctx;
+rv32i_ctx_t *g_rv32i_ctx;
 ram_t g_dram_mem;
 ram_t g_iram_mem;
 
