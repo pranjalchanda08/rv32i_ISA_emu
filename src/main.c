@@ -67,7 +67,7 @@ static void rv32_cpu_reg_dump(char const *asm_name)
     sprintf(out_file_path, "out/%s/reg_dump.bin", asm_name);
     printf("Saving REG Dump: %s\n", out_file_path);
     FILE *mem = fopen(out_file_path, "wb");
-    fwrite(&g_rv32i_ctx, sizeof(rv32i_ctx_t), 1, mem);
+    fwrite(g_rv32i_ctx, sizeof(rv32i_ctx_t), 1, mem);
     fclose(mem);
 }
 
@@ -87,7 +87,8 @@ int main(int argc, char const *argv[])
     rv32_ram_attach();
     /* Read instruction and data binary and save it to the ram instance */
     rv32_ram_store_ibin(argv[1]);
-
+    g_rv32i_ctx = (rv32i_ctx_t *) malloc(sizeof(rv32i_ctx_t));
+    memset(g_rv32i_ctx, 0, sizeof(rv32i_ctx_t));
     printf("\n-------------- Execution Start --------------\n");
     rv32_fetch(&g_iram_mem);
     printf("-------------- Execution End ----------------\n\n");
@@ -95,5 +96,6 @@ int main(int argc, char const *argv[])
     rv32_ram_dump(argv[2]);
     rv32_cpu_reg_dump(argv[2]);
     rv32_ram_detach();
+    free(g_rv32i_ctx);
     return 0;
 }

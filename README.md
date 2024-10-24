@@ -90,23 +90,23 @@ $ make run ARGS=build/add.bin ASM=add
 make run ARGS=build/add.bin ASM=add
 mkdir -p out/add
 ./build/rv32I_emu build/add.bin add
-rv32I emu Startup
+rv32I emu Startup 
 RAM Init done
-IRAM Space Allocation done: s:0x400, b:0x1000
-DRAM Space Allocation done: s:0x1000, b:0x2000
+IRAM Space Allocation done: s:0x400, b:0x1000 
+DRAM Space Allocation done: s:0x1000, b:0x2000 
 ibin found. Reading build/add.bin
 Reading binary Success. Max Addr: 0x2010
 
 -------------- Execution Start --------------
 
-[0x00001000]: [0x00002117]: RV32_OPCODE_AUIPC   : auipc sp, 0x2000
-[0x00001004]: [0x00010113]: RV32_OPCODE_ALUI    : addi  sp, sp, 0x0
-[0x00001008]: [0x01300293]: RV32_OPCODE_ALUI    : addi  t0, zero, 0x13
-[0x0000100C]: [0x02300313]: RV32_OPCODE_ALUI    : addi  t1, zero, 0x23
-[0x00001010]: [0x006283B3]: RV32_OPCODE_ALUR    : add   t2, t0, t1
-[0x00001014]: [0x00001E97]: RV32_OPCODE_AUIPC   : auipc t4, 0x1000
-[0x00001018]: [0xFECE8E93]: RV32_OPCODE_ALUI    : addi  t4, t4, 0xfec
-[0x0000101C]: [0x00000000]: PC reached EOF
+[0x00002117]: [PC:0x00001000]: auipc    sp, 0x2000
+[0x00010113]: [PC:0x00001004]: addi     sp, sp, 0x0
+[0x01300293]: [PC:0x00001008]: addi     t0, x0, 0x13
+[0x02300313]: [PC:0x0000100C]: addi     t1, x0, 0x23
+[0x006283B3]: [PC:0x00001010]: add      t2, t0, t1
+[0x00001E97]: [PC:0x00001014]: auipc    t4, 0x1000
+[0xFECE8E93]: [PC:0x00001018]: addi     t4, t4, 0xffffffec
+[0x00000000]: [PC:0x0000101C]: PC reached EOF
 -------------- Execution End ----------------
 
 Saving RAM Dump: out/add/ram_dump.bin
@@ -141,3 +141,17 @@ hexdump out/add/reg_dump.bin
 0000080 1014 0000
 0000084
 ```
+
+### Add an instruction to the build
+
+To add an instruction into the framework we need to do the following:
+1. `opcodes.h`: Add an entry into `rv32_opcode_t` if adding a new opcode.
+    * The decode string shall follow formated string consisting of `$rd`, `$rs1`, `$rs2`, `$i` only.
+    * All immidiate value formats of any instruction structure shall be represented using `$i`.
+2. `opcode_tree.c`: Add entry to `opcode_reg_list` using following macros:
+    * `RV32_OPCODE_NO_SUB`    : API to add an opcode entry to the list with no sub functionality to the opcode.
+    * `RV32_OPCODE_WITH_SUB` : API to add an opcode entry to the list with `n` sub functionality to the opcode.
+    * `RV32_SUB_FUNC_ENTRY` : API to add sub functions in an array.
+3. `rv32_execute.c` : Add callback entry for the instruction execution.
+
+
