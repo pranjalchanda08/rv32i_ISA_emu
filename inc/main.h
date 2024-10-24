@@ -9,6 +9,6 @@
 #include "rv32i_execute.h"
 #include "platmem.h"
 
-extern rv32i_ctx_t g_rv32i_ctx;
+extern rv32i_ctx_t * g_rv32i_ctx;
 extern ram_t g_dram_mem;
 extern ram_t g_iram_mem;
